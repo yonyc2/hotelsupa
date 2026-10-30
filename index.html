@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control de Toallas</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <p style="padding: 24px;">Cargando… Si no avanza, <a href="login.html">entra aquí</a>.</p>
+  <script src="js/storage.js"></script>
+  <script>
+    // Equivale a la ruta "/" del servidor: manda a cada rol a su pantalla
+    const homes = { admin: 'admin.html', recepcion: 'recepcion.html', toallero: 'toallero.html' };
+    const session = Store.getSession();
+    window.location.replace(session && homes[session.role] ? homes[session.role] : 'login.html');
+  </script>
+</body>
+</html>
