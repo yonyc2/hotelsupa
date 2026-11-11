@@ -39,7 +39,7 @@ function renderStays() {
   if (!staysCache.length) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="9">No hay huéspedes registrados</td>
+        <td colspan="8">No hay huéspedes registrados</td>
       </tr>
     `;
     return;
@@ -53,7 +53,6 @@ function renderStays() {
       <td>${escapeHtml(stay.room_number)}</td>
       <td>${escapeHtml(stay.guest_name)}</td>
       <td>${escapeHtml(stay.guest_barcode || '')}</td>
-      <td>${escapeHtml(stay.cards_count)}</td>
       <td>${escapeHtml(stay.towel_limit)}</td>
       <td>${escapeHtml(stay.current_towels)}</td>
       <td>${escapeHtml(remaining)}</td>
@@ -82,7 +81,6 @@ async function createStay(e) {
     guest_name: document.getElementById('guest_name').value,
     room_number: document.getElementById('room_number').value,
     guest_barcode: document.getElementById('guest_barcode').value.trim(),
-    cards_count: Number(document.getElementById('cards_count').value),
     towel_limit: Number(document.getElementById('towel_limit').value),
     initial_towels: Number(document.getElementById('initial_towels').value),
     comment: document.getElementById('comment').value
@@ -98,7 +96,6 @@ async function createStay(e) {
     loadStays();
     e.target.reset();
 
-    document.getElementById('cards_count').value = 1;
     document.getElementById('towel_limit').value = 5;
     document.getElementById('initial_towels').value = 0;
   } catch (err) {
@@ -131,7 +128,6 @@ function renderDetail() {
   setTextAnimated('detailRemaining', currentStay.towel_limit - currentStay.current_towels);
 
   document.getElementById('detailLimit').value = currentStay.towel_limit;
-  document.getElementById('detailCards').value = currentStay.cards_count;
   document.getElementById('detailComment').value = currentStay.comment || '';
 
   const checkoutBtn = document.getElementById('checkoutBtn');
@@ -150,7 +146,6 @@ async function saveCurrentStay() {
 
   const payload = {
     towel_limit: Number(document.getElementById('detailLimit').value),
-    cards_count: Number(document.getElementById('detailCards').value),
     comment: document.getElementById('detailComment').value
   };
 

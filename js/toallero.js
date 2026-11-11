@@ -43,7 +43,6 @@ function renderGuest() {
   document.getElementById('tName').textContent = currentStay.guest_name;
   document.getElementById('tRoom').textContent = currentStay.room_number;
   document.getElementById('tBarcode').textContent = currentStay.guest_barcode;
-  document.getElementById('tCards').textContent = currentStay.cards_count;
   document.getElementById('tEntry').textContent = currentStay.entry_date_cdmx;
   document.getElementById('tExit').textContent = currentStay.exit_date_cdmx || 'Pendiente';
   document.getElementById('tStatus').textContent = currentStay.status;

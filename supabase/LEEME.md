@@ -33,3 +33,6 @@ update public.profiles set role = 'recepcion', active = true where username = 'm
 ## Seguridad
 - `js/config.js` solo lleva la clave **publishable** (pública por diseño). Nunca pongas la clave *secret* / *service_role*.
 - Nadie puede escribir directo en las tablas: todo pasa por funciones que validan el rol y las reglas.
+
+## Actualizaciones de la base (si ya tenías el script instalado)
+- `supabase/migracion-quitar-tarjetas.sql`: quita la "cantidad de tarjetas" de los huéspedes. Orden: primero publica la versión nueva de la app y **después** ejecútalo una vez en el SQL Editor (la app nueva funciona con la base vieja y con la nueva, pero la app vieja deja de funcionar con la base nueva).

@@ -38,7 +38,6 @@ create table if not exists public.stays (
   guest_barcode   text not null check (guest_barcode ~ '^[0-9]{4,20}$'),
   guest_name      text not null check (char_length(guest_name) between 1 and 100),
   room_number     text not null check (char_length(room_number) between 1 and 20),
-  cards_count     integer not null default 1 check (cards_count between 0 and 100000),
   status          text not null default 'activo' check (status in ('activo', 'salido')),
   entry_date      timestamptz not null default now(),
   exit_date       timestamptz,
@@ -218,7 +217,6 @@ create or replace function public.create_stay(
   p_guest_name     text,
   p_room_number    text,
   p_guest_barcode  text,
-  p_cards_count    integer default 1,
   p_towel_limit    integer default null,
   p_initial_towels integer default 0,
   p_comment        text default ''
@@ -234,7 +232,6 @@ declare
   v_room    text;
   v_code    text := btrim(coalesce(p_guest_barcode, ''));
   v_comment text;
-  v_cards   integer := coalesce(p_cards_count, 1);
   v_initial integer := coalesce(p_initial_towels, 0);
   s         public.stays;
 begin
@@ -251,8 +248,6 @@ begin
   if p_towel_limit > 100000 then raise exception 'Límite de toallas es demasiado grande'; end if;
   if v_initial < 0 then raise exception 'Toallas iniciales debe ser un entero mayor o igual a 0'; end if;
   if v_initial > 100000 then raise exception 'Toallas iniciales es demasiado grande'; end if;
-  if v_cards < 0 then raise exception 'Cantidad de tarjetas debe ser un entero mayor o igual a 0'; end if;
-  if v_cards > 100000 then raise exception 'Cantidad de tarjetas es demasiado grande'; end if;
 
   if v_initial > p_towel_limit then
     raise exception 'Las toallas iniciales no pueden exceder el límite configurado';
@@ -272,9 +267,9 @@ begin
     raise exception 'Ese código de tarjeta ya está en uso por un huésped activo';
   end if;
 
-  insert into public.stays (guest_barcode, guest_name, room_number, cards_count, towel_limit,
+  insert into public.stays (guest_barcode, guest_name, room_number, towel_limit,
                             initial_towels, current_towels, comment, created_by, updated_by)
-  values (v_code, v_name, v_room, v_cards, p_towel_limit, v_initial, v_initial, v_comment, v_uid, v_uid)
+  values (v_code, v_name, v_room, p_towel_limit, v_initial, v_initial, v_comment, v_uid, v_uid)
   returning * into s;
 
   if v_initial > 0 then
@@ -284,7 +279,7 @@ begin
 
   perform public.add_history(v_uid, 'ALTA_HUESPED', s.id, null,
     jsonb_build_object('guest_name', s.guest_name, 'room_number', s.room_number, 'guest_barcode', s.guest_barcode,
-                       'cards_count', s.cards_count, 'towel_limit', s.towel_limit,
+                       'towel_limit', s.towel_limit,
                        'initial_towels', s.initial_towels, 'current_towels', s.current_towels));
   return s;
 
@@ -298,7 +293,6 @@ $$;
 create or replace function public.update_stay(
   p_id           bigint,
   p_towel_limit  integer default null,
-  p_cards_count  integer default null,
   p_comment      text default null,
   p_guest_name   text default null
 )
@@ -314,7 +308,7 @@ declare
 begin
   perform public.require_role(array['recepcion', 'admin']);
 
-  if p_towel_limit is null and p_cards_count is null and p_comment is null and p_guest_name is null then
+  if p_towel_limit is null and p_comment is null and p_guest_name is null then
     raise exception 'No hay datos para actualizar';
   end if;
 
@@ -323,8 +317,7 @@ begin
     raise exception 'Huésped no encontrado';
   end if;
 
-  v_old := jsonb_build_object('guest_name', s.guest_name, 'towel_limit', s.towel_limit,
-                              'cards_count', s.cards_count, 'comment', s.comment);
+  v_old := jsonb_build_object('guest_name', s.guest_name, 'towel_limit', s.towel_limit, 'comment', s.comment);
 
   if p_towel_limit is not null then
     if p_towel_limit < 0 then raise exception 'Límite de toallas debe ser un entero mayor o igual a 0'; end if;
@@ -333,12 +326,6 @@ begin
       raise exception 'El nuevo límite no puede ser menor a las toallas que ya tiene el huésped';
     end if;
     s.towel_limit := p_towel_limit;
-  end if;
-
-  if p_cards_count is not null then
-    if p_cards_count < 0 then raise exception 'Cantidad de tarjetas debe ser un entero mayor o igual a 0'; end if;
-    if p_cards_count > 100000 then raise exception 'Cantidad de tarjetas es demasiado grande'; end if;
-    s.cards_count := p_cards_count;
   end if;
 
   if p_comment is not null then
@@ -351,7 +338,6 @@ begin
 
   update public.stays
      set towel_limit = s.towel_limit,
-         cards_count = s.cards_count,
          comment     = s.comment,
          guest_name  = s.guest_name,
          updated_by  = v_uid
@@ -359,8 +345,7 @@ begin
   returning * into s;
 
   perform public.add_history(v_uid, 'ACTUALIZAR_HUESPED', s.id, v_old,
-    jsonb_build_object('guest_name', s.guest_name, 'towel_limit', s.towel_limit,
-                       'cards_count', s.cards_count, 'comment', s.comment));
+    jsonb_build_object('guest_name', s.guest_name, 'towel_limit', s.towel_limit, 'comment', s.comment));
   return s;
 end;
 $$;
@@ -697,8 +682,8 @@ revoke all on function public.handle_new_user()                                 
 -- Funciones que sí usa la aplicación (solo usuarios con sesión)
 revoke all on function public.app_role()                                            from public, anon;
 revoke all on function public.fmt_cdmx(timestamptz)                                 from public, anon;
-revoke all on function public.create_stay(text, text, text, integer, integer, integer, text) from public, anon;
-revoke all on function public.update_stay(bigint, integer, integer, text, text)     from public, anon;
+revoke all on function public.create_stay(text, text, text, integer, integer, text) from public, anon;
+revoke all on function public.update_stay(bigint, integer, text, text)     from public, anon;
 revoke all on function public.move_towels(bigint, text, integer, text)              from public, anon;
 revoke all on function public.checkout_stay(bigint)                                 from public, anon;
 revoke all on function public.scan_stay(text)                                       from public, anon;
@@ -708,8 +693,8 @@ revoke all on function public.purge_history(bigint)                             
 
 grant execute on function public.app_role()                                            to authenticated;
 grant execute on function public.fmt_cdmx(timestamptz)                                 to authenticated;
-grant execute on function public.create_stay(text, text, text, integer, integer, integer, text) to authenticated;
-grant execute on function public.update_stay(bigint, integer, integer, text, text)     to authenticated;
+grant execute on function public.create_stay(text, text, text, integer, integer, text) to authenticated;
+grant execute on function public.update_stay(bigint, integer, text, text)     to authenticated;
 grant execute on function public.move_towels(bigint, text, integer, text)              to authenticated;
 grant execute on function public.checkout_stay(bigint)                                 to authenticated;
 grant execute on function public.scan_stay(text)                                       to authenticated;

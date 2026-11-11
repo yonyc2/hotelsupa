@@ -86,6 +86,37 @@ const actions = { logout };
 
 guardPage();
 
+// El administrador tiene todos los privilegios: ve un menú para pasar entre las tres pantallas
+function buildAdminNav() {
+  const session = Store.getSession();
+  const bar = document.querySelector('.topbar');
+  if (!session || session.role !== 'admin' || !bar || bar.querySelector('[data-nav]')) return;
+
+  const current = window.location.pathname.split('/').pop() || 'index.html';
+  const nav = document.createElement('div');
+  nav.style.cssText = 'display: flex; gap: 8px; flex-wrap: wrap; flex: 1; margin-left: 16px;';
+
+  [['admin.html', 'Administración'], ['recepcion.html', 'Recepción'], ['toallero.html', 'Toallero']].forEach(([page, label]) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = label;
+    btn.dataset.nav = page;
+    if (page !== current) btn.className = 'secondary';
+    else btn.setAttribute('aria-current', 'page');
+    nav.appendChild(btn);
+  });
+
+  const title = bar.querySelector('strong');
+  if (title) title.after(nav); else bar.prepend(nav);
+}
+
+buildAdminNav();
+
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-nav]');
+  if (btn && btn.dataset.nav !== (window.location.pathname.split('/').pop() || '')) window.location.href = btn.dataset.nav;
+});
+
 document.addEventListener('click', (e) => {
   const btn = e.target.closest('[data-action]');
   if (!btn) return;

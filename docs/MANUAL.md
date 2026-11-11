@@ -1,7 +1,7 @@
 # Manual de uso
 
 ## Roles
-- **Administrador**: administración (usuarios, historial, exportar, respaldos) y recepción.
+- **Administrador**: tiene todos los privilegios. Además de la administración (usuarios, historial, exportar, respaldos), puede usar las pantallas de Recepción y de Toallero; un menú en la barra superior permite pasar de una a otra.
 - **Recepción**: registrar y editar huéspedes, check-out.
 - **Toallero**: escanear tarjeta, entregar y devolver toallas.
 
@@ -9,11 +9,11 @@ Después de 5 intentos fallidos con un usuario (o 30 en el navegador) el acceso 
 La sesión se renueva sola mientras uses la aplicación. Los usuarios inactivos no pueden entrar.
 
 ## Recepción
-1. **Registrar huésped**: nombre, habitación, código de tarjeta (4 a 20 dígitos), tarjetas, límite de toallas, toallas iniciales y comentario.
+1. **Registrar huésped**: nombre, habitación, código de tarjeta (4 a 20 dígitos), límite de toallas, toallas iniciales y comentario.
    - Una habitación o un código solo puede estar activo con un huésped a la vez; tras el check-out se pueden reutilizar.
    - Las toallas iniciales no pueden superar el límite.
 2. **Buscar** por nombre, habitación o código; "Mostrar todos" incluye a quienes ya salieron.
-3. **Detalle**: editar límite (no menor a las toallas que ya tiene), tarjetas y comentario.
+3. **Detalle**: editar límite (no menor a las toallas que ya tiene) y comentario.
 4. **Check-out**: solo cuando el huésped tiene 0 toallas.
 
 ## Toallero

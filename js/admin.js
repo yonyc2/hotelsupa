@@ -150,7 +150,8 @@ const ACTIONS = {
 
 const FIELD_LABELS = {
   guest_name: 'Huésped', room_number: 'Habitación', guest_barcode: 'Código',
-  cards_count: 'Tarjetas', towel_limit: 'Límite', initial_towels: 'Toallas iniciales',
+  cards_count: 'Tarjetas',  // solo para entradas antiguas del historial
+  towel_limit: 'Límite', initial_towels: 'Toallas iniciales',
   current_towels: 'Toallas', comment: 'Comentario', status: 'Estado', quantity: 'Cantidad',
   username: 'Usuario', usuarios: 'Usuarios', huespedes_activos: 'Huéspedes activos', huespedes_checkout: 'Huéspedes con check-out'
 };

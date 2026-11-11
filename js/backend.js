@@ -103,11 +103,11 @@ const Backend = (() => {
 
   const createStay = body => Supa.rpc('create_stay', {
     p_guest_name: body.guest_name, p_room_number: body.room_number, p_guest_barcode: body.guest_barcode,
-    p_cards_count: body.cards_count, p_towel_limit: body.towel_limit, p_initial_towels: body.initial_towels, p_comment: body.comment
+    p_towel_limit: body.towel_limit, p_initial_towels: body.initial_towels, p_comment: body.comment
   });
 
   const updateStay = (id, body) => Supa.rpc('update_stay', {
-    p_id: id, p_towel_limit: body.towel_limit, p_cards_count: body.cards_count, p_comment: body.comment, p_guest_name: body.guest_name
+    p_id: id, p_towel_limit: body.towel_limit, p_comment: body.comment, p_guest_name: body.guest_name
   });
 
   const moveTowels = (id, body) => Supa.rpc('move_towels', { p_stay_id: id, p_action: body.action, p_qty: body.qty, p_reason: body.reason });
@@ -140,7 +140,10 @@ const Backend = (() => {
     try {
       await Supa.callFunction('create-user', { username: uname, email: emailFor(uname).toLowerCase(), password: pw, full_name: String(full_name).trim(), role });
     } catch (e) {
-      if (e.status === 404) fail(404, 'Falta publicar la función "create-user" en Supabase (ver supabase/LEEME.md). Mientras tanto crea el usuario en Authentication > Users.');
+      // Si la función no existe, el navegador la reporta como 404 o como "sin conexión" (el 404 no trae permisos CORS)
+      if (e.status === 404 || e.status === 0) {
+        fail(404, 'No se pudo llamar a la función "create-user": lo más probable es que no esté publicada en Supabase (ver supabase/LEEME.md, punto 4). Mientras tanto crea el usuario en Authentication > Users.');
+      }
       throw e;
     }
     return { ok: true };
@@ -186,9 +189,9 @@ const Backend = (() => {
     const blob = Xlsx.build([
       ['Usuarios', ['ID', 'Usuario', 'Nombre', 'Rol', 'Activo', 'Creado (CDMX)'],
         profiles.map(u => [u.id, u.username, u.full_name, u.role, u.active ? 'Sí' : 'No', fmtCdmx(u.created_at)])],
-      ['Huespedes', ['ID', 'Código', 'Huésped', 'Habitación', 'Tarjetas', 'Estado', 'Entrada (CDMX)', 'Salida (CDMX)', 'Límite toallas',
+      ['Huespedes', ['ID', 'Código', 'Huésped', 'Habitación', 'Estado', 'Entrada (CDMX)', 'Salida (CDMX)', 'Límite toallas',
         'Toallas iniciales', 'Toallas actuales', 'Comentario', 'Creado por', 'Actualizado por'],
-        stays.map(s => [s.id, s.guest_barcode, s.guest_name, s.room_number, s.cards_count, s.status, s.entry_date_cdmx, s.exit_date_cdmx || '',
+        stays.map(s => [s.id, s.guest_barcode, s.guest_name, s.room_number, s.status, s.entry_date_cdmx, s.exit_date_cdmx || '',
           s.towel_limit, s.initial_towels, s.current_towels, s.comment, un(s.created_by), un(s.updated_by)])],
       ['Movimientos', ['ID', 'Fecha (CDMX)', 'Huésped', 'Habitación', 'Usuario', 'Tipo', 'Cantidad', 'Saldo después', 'Motivo'],
         movements.map(m => [m.id, m.created_at_cdmx, m.guest_name, m.room_number, m.username, m.movement_type, m.quantity, m.balance_after, m.reason || ''])],
