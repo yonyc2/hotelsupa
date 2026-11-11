@@ -239,6 +239,7 @@ const Backend = (() => {
       if (method === 'GET' && path === '/api/security/default-passwords') return [];   // ya no hay usuarios con contraseña por defecto
 
       if (method === 'POST' && path === '/api/export-db') return await exportDatabase();
+      if (method === 'POST' && path === '/api/purge-stays') return await Supa.rpc('purge_stays_until', { p_until: body.until, p_apply: !!body.apply });
     } catch (e) {
       throw normalize(e);
     }

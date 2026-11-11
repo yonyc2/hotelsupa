@@ -36,3 +36,4 @@ update public.profiles set role = 'recepcion', active = true where username = 'm
 
 ## Actualizaciones de la base (si ya tenías el script instalado)
 - `supabase/migracion-quitar-tarjetas.sql`: quita la "cantidad de tarjetas" de los huéspedes. Orden: primero publica la versión nueva de la app y **después** ejecútalo una vez en el SQL Editor (la app nueva funciona con la base vieja y con la nueva, pero la app vieja deja de funcionar con la base nueva).
+- `supabase/migracion-eliminar-antiguos.sql`: agrega la función del botón "Eliminar datos antiguos" de la administración. Ejecútalo una vez en el SQL Editor (sin ella, ese botón marcará que la función no existe).

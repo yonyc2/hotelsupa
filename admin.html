@@ -30,6 +30,18 @@
 
 
     <div class="card">
+      <h2>Eliminar datos antiguos</h2>
+      <p class="muted">
+        Borra los huéspedes que ya hicieron check-out hasta la fecha que elijas (inclusive), con sus movimientos
+        de toallas y su historial. Los huéspedes activos y los usuarios no se tocan. Antes se guarda un respaldo.
+      </p>
+      <div class="toolbar">
+        <input type="date" id="purgeDate" style="max-width: 220px;">
+        <button id="purgeBtn" type="button" class="danger">Eliminar datos hasta esa fecha</button>
+      </div>
+    </div>
+
+    <div class="card">
       <h2>Crear usuario</h2>
 
       <form id="userForm">

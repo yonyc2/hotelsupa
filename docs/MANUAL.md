@@ -25,6 +25,11 @@ Escanea el código de la tarjeta (o escríbelo y presiona Enter). Se muestran lo
 - **Crear usuario**: usuario de 3 a 32 caracteres (letras, números, punto, guion), contraseña de 8 o más con letras y números. Requiere publicar la función `create-user` (ver `supabase/LEEME.md`); si no, crea los usuarios en Supabase > Authentication > Users.
 - **Activar/desactivar** usuarios (no puedes desactivarte a ti mismo).
 - **Historial**: filtros por texto y acción, y cantidad de registros.
+- **Eliminar datos antiguos**: elige una fecha y borra a los huéspedes que ya hicieron check-out hasta ese día (inclusive, hora de CDMX), junto con sus movimientos de toallas y su historial.
+  - Muestra cuántos registros se eliminarían y pide confirmar escribiendo ELIMINAR.
+  - Guarda un respaldo `.json` antes de borrar.
+  - Nunca toca a los huéspedes activos ni a los usuarios, y no acepta fechas futuras.
+  - No se puede deshacer desde la app.
 - **Exportar base de datos**:
   1. Guarda un respaldo `.json` (en la carpeta de respaldos, o lo descarga).
   2. Descarga un Excel con 4 hojas: Usuarios, Huespedes (activos y con check-out, con todos sus datos), Movimientos e Historial. No incluye contraseñas.

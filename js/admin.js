@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('backupFolderBtn').addEventListener('click', chooseBackupFolder);
   document.getElementById('backupNowBtn').addEventListener('click', backupNow);
+  document.getElementById('purgeBtn').addEventListener('click', purgeOldData);
 
   checkDefaultPasswords();
   Backup.auto().catch(() => {}).finally(refreshBackupStatus);
@@ -46,6 +47,48 @@ async function chooseBackupFolder() {
     if (err && err.name !== 'AbortError') showMessage('adminMsg', err.message, 'error');
   }
   refreshBackupStatus();
+}
+
+async function purgeOldData() {
+  const date = document.getElementById('purgeDate').value;
+  if (!date) return showMessage('adminMsg', 'Elige la fecha hasta la cual quieres eliminar los datos', 'error');
+
+  const btn = document.getElementById('purgeBtn');
+  btn.disabled = true;
+
+  try {
+    // 1. Solo cuenta lo que se borraría (todavía no borra nada)
+    const preview = await api('/api/purge-stays', { method: 'POST', body: { until: date, apply: false } });
+
+    if (!preview.stays) {
+      showMessage('adminMsg', `No hay huéspedes con check-out hasta el ${date}`, 'error');
+      return;
+    }
+
+    const ok = window.confirm(
+      `Se ELIMINARÁN ${preview.stays} huésped(es) con check-out hasta el ${date}, ` +
+      `con ${preview.movements} movimiento(s) de toallas y ${preview.history} registro(s) de historial.\n\n` +
+      'Los huéspedes activos y los usuarios NO se tocan.\nEsta acción no se puede deshacer.\n\n¿Continuar?'
+    );
+    if (!ok) return;
+
+    const word = window.prompt('Para confirmar escribe ELIMINAR');
+    if (word === null || word.trim().toUpperCase() !== 'ELIMINAR') {
+      showMessage('adminMsg', 'Cancelado: no se eliminó nada', 'error');
+      return;
+    }
+
+    // 2. Respaldo previo y borrado
+    await Backup.save('antes-de-eliminar');
+    const res = await api('/api/purge-stays', { method: 'POST', body: { until: date, apply: true } });
+
+    showMessage('adminMsg', `Se eliminaron ${res.stays} huésped(es), ${res.movements} movimiento(s) y ${res.history} registro(s) de historial`, 'success');
+    loadHistory();
+  } catch (err) {
+    showMessage('adminMsg', err.message, 'error');
+  } finally {
+    btn.disabled = false;
+  }
 }
 
 async function backupNow() {
@@ -145,7 +188,8 @@ const ACTIONS = {
   CHECKOUT:            { label: 'Check-out',          cls: 'purple' },
   ENTREGA_TOALLAS:     { label: 'Entrega de toallas', cls: 'blue' },
   DEVOLUCION_TOALLAS:  { label: 'Devolución de toallas', cls: 'teal' },
-  EXPORTAR_BD:         { label: 'Exportación de BD',  cls: 'neutral' }
+  EXPORTAR_BD:         { label: 'Exportación de BD',  cls: 'neutral' },
+  ELIMINAR_DATOS_ANTIGUOS: { label: 'Datos antiguos eliminados', cls: 'error' }
 };
 
 const FIELD_LABELS = {
@@ -153,7 +197,8 @@ const FIELD_LABELS = {
   cards_count: 'Tarjetas',  // solo para entradas antiguas del historial
   towel_limit: 'Límite', initial_towels: 'Toallas iniciales',
   current_towels: 'Toallas', comment: 'Comentario', status: 'Estado', quantity: 'Cantidad',
-  username: 'Usuario', usuarios: 'Usuarios', huespedes_activos: 'Huéspedes activos', huespedes_checkout: 'Huéspedes con check-out'
+  username: 'Usuario', usuarios: 'Usuarios', hasta: 'Hasta', huespedes: 'Huéspedes', movimientos: 'Movimientos', historial: 'Historial',
+  huespedes_activos: 'Huéspedes activos', huespedes_checkout: 'Huéspedes con check-out'
 };
 
 let historyRows = [];
