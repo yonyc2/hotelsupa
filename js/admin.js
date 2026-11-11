@@ -60,15 +60,18 @@ async function purgeOldData() {
     // 1. Solo cuenta lo que se borraría (todavía no borra nada)
     const preview = await api('/api/purge-stays', { method: 'POST', body: { until: date, apply: false } });
 
-    if (!preview.stays) {
-      showMessage('adminMsg', `No hay huéspedes con check-out hasta el ${date}`, 'error');
+    if (!preview.stays && !preview.users && !preview.history) {
+      showMessage('adminMsg', `No hay nada para eliminar hasta el ${date}`, 'error');
       return;
     }
 
+    const users = preview.users ? `${preview.users} usuario(s) desactivado(s) (${(preview.usernames || []).join(', ')})` : 'ningún usuario';
     const ok = window.confirm(
-      `Se ELIMINARÁN ${preview.stays} huésped(es) con check-out hasta el ${date}, ` +
-      `con ${preview.movements} movimiento(s) de toallas y ${preview.history} registro(s) de historial.\n\n` +
-      'Los huéspedes activos y los usuarios NO se tocan.\nEsta acción no se puede deshacer.\n\n¿Continuar?'
+      `Hasta el ${date} se ELIMINARÁN:\n` +
+      `• ${preview.stays} huésped(es) con check-out, con ${preview.movements} movimiento(s) de toallas\n` +
+      `• ${preview.history} registro(s) de historial\n` +
+      `• ${users}\n\n` +
+      'Los huéspedes activos y los usuarios activos NO se tocan.\nEsta acción no se puede deshacer.\n\n¿Continuar?'
     );
     if (!ok) return;
 
@@ -82,8 +85,9 @@ async function purgeOldData() {
     await Backup.save('antes-de-eliminar');
     const res = await api('/api/purge-stays', { method: 'POST', body: { until: date, apply: true } });
 
-    showMessage('adminMsg', `Se eliminaron ${res.stays} huésped(es), ${res.movements} movimiento(s) y ${res.history} registro(s) de historial`, 'success');
+    showMessage('adminMsg', `Se eliminaron ${res.stays} huésped(es), ${res.movements} movimiento(s), ${res.history} registro(s) de historial y ${res.users} usuario(s)`, 'success');
     loadHistory();
+    loadUsers();
   } catch (err) {
     showMessage('adminMsg', err.message, 'error');
   } finally {
