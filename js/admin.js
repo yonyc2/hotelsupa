@@ -81,8 +81,7 @@ async function purgeOldData() {
       return;
     }
 
-    // 2. Respaldo previo y borrado
-    await Backup.save('antes-de-eliminar');
+    // 2. Borrado definitivo en la base de datos
     const res = await api('/api/purge-stays', { method: 'POST', body: { until: date, apply: true } });
 
     showMessage('adminMsg', `Se eliminaron ${res.stays} huésped(es), ${res.movements} movimiento(s), ${res.history} registro(s) de historial y ${res.users} usuario(s)`, 'success');
@@ -309,10 +308,7 @@ async function exportDatabase() {
   btn.disabled = true;
 
   try {
-    // 1. Respaldo previo a la limpieza (carpeta elegida o descarga)
-    await Backup.save('antes-de-limpiar');
-
-    // 2. Genera el Excel y limpia el historial
+    // Genera el Excel (con todo el historial) y después limpia el historial en la base
     const { blob, filename } = await api('/api/export-db', { method: 'POST' });
     Backup.download(blob, filename);
 

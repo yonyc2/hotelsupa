@@ -31,13 +31,12 @@ Escanea el código de la tarjeta (o escríbelo y presiona Enter). Se muestran lo
   - los usuarios desactivados creados hasta esa fecha (también se borran de Authentication en Supabase).
 
   Muestra cuántos registros y qué usuarios se eliminarían, y pide confirmar escribiendo ELIMINAR.
-  Guarda un respaldo `.json` antes de borrar. Nunca toca a los huéspedes activos ni a los usuarios activos,
+  Los datos se borran definitivamente de la base de datos y no se crea ningún archivo de respaldo.
+  Nunca toca a los huéspedes activos ni a los usuarios activos,
   y no acepta fechas futuras. No se puede deshacer desde la app.
 - **Exportar base de datos**:
-  1. Guarda un respaldo `.json` (en la carpeta de respaldos, o lo descarga).
-  2. Descarga un Excel con 4 hojas: Usuarios, Huespedes (activos y con check-out, con todos sus datos), Movimientos e Historial. No incluye contraseñas.
-  3. **Borra el historial**. Usuarios, huéspedes y movimientos se conservan.
-  El navegador puede pedir permiso para descargar varios archivos.
+  1. Descarga un Excel con 4 hojas: Usuarios, Huespedes (activos y con check-out, con todos sus datos), Movimientos e Historial. No incluye contraseñas.
+  2. **Borra el historial** de la base de datos. Usuarios, huéspedes y movimientos se conservan.
 
 ## Respaldos
 Los datos están en Supabase, no en el navegador. Aun así conviene tener copias propias:
