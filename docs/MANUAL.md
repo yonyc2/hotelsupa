@@ -38,6 +38,14 @@ Escanea el código de la tarjeta (o escríbelo y presiona Enter). Se muestran lo
   1. Descarga un Excel con 4 hojas: Usuarios, Huespedes (activos y con check-out, con todos sus datos), Movimientos e Historial. No incluye contraseñas.
   2. **Borra el historial** de la base de datos. Usuarios, huéspedes y movimientos se conservan.
 
+## Reporte de toallas (Recepción, Toallero y Administración)
+Al final de cada pantalla hay un reporte por día:
+- **Entregadas hoy / Recibidas hoy**: totales del día actual (hora de CDMX).
+- **Tabla por día** con un rango de fechas a elegir (por defecto los últimos 7 días): toallas entregadas, recibidas y la diferencia (entregadas − recibidas), con totales.
+- **Entregadas** incluye las toallas iniciales asignadas al registrar a un huésped; **Recibidas** son las devoluciones.
+- Se actualiza solo cuando otro dispositivo registra movimientos.
+- Si usas "Eliminar datos antiguos", los movimientos de los huéspedes borrados dejan de contar en días anteriores.
+
 ## Respaldos
 Los datos están en Supabase, no en el navegador. Aun así conviene tener copias propias:
 - **Elegir carpeta de respaldos automáticos** (Chrome/Edge): al abrir la administración se guarda un `.json` por día con todas las tablas y se conservan los últimos 14. El navegador puede pedir permiso otra vez en cada sesión; "Respaldar ahora" lo reactiva.

@@ -231,6 +231,7 @@ const Backend = (() => {
       if (method === 'POST' && (m = path.match(/^\/api\/stays\/(\d+)\/checkout$/))) return await checkout(Number(m[1]));
       if (method === 'GET' && (m = path.match(/^\/api\/scan\/(.+)$/))) return await scan(decodeURIComponent(m[1]));
 
+      if (method === 'GET' && path === '/api/report/towels') return await Supa.rpc('towel_report', { p_from: params.get('from'), p_to: params.get('to') });
       if (method === 'GET' && path === '/api/history') return await history(params);
 
       if (method === 'GET' && path === '/api/users') return await listUsers();

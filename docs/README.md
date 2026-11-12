@@ -23,6 +23,7 @@ js/supabase.js    cliente mínimo de Supabase (Auth, REST, RPC) sin librerías
 js/backend.js     traduce las rutas /api/... a llamadas a Supabase
 js/storage.js     sesión del navegador y bloqueo por intentos fallidos
 js/xlsx.js        generador de Excel (.xlsx) sin librerías
+js/reporte.js     reporte de toallas por día (Recepción, Toallero y Administración)
 js/backup.js      respaldos (carpeta automática diaria y manual)
 js/common.js      utilidades, protección de páginas y actualización entre dispositivos
 js/login.js, recepcion.js, toallero.js, admin.js   lógica de cada pantalla
