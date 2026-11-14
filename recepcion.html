@@ -87,7 +87,10 @@
     </div>
 
     <div class="card hidden" id="stayDetail">
-      <h2>Detalle del huésped</h2>
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px;">
+        <h2 style="margin: 0;">Detalle del huésped</h2>
+        <button id="editStayBtn" type="button" class="secondary">Editar</button>
+      </div>
 
       <p>
         <strong>Nombre:</strong> <span id="detailName"></span><br>
@@ -96,24 +99,42 @@
         <strong>Entrada:</strong> <span id="detailEntry"></span><br>
         <strong>Salida:</strong> <span id="detailExit"></span><br>
         <strong>Estado:</strong> <span id="detailStatus"></span><br>
+        <strong>Límite de toallas:</strong> <span id="detailLimitText"></span><br>
         <strong>Toallas actuales:</strong> <span id="detailCurrent"></span><br>
-        <strong>Disponibles:</strong> <span id="detailRemaining"></span>
+        <strong>Disponibles:</strong> <span id="detailRemaining"></span><br>
+        <strong>Comentario:</strong> <span id="detailCommentText"></span>
       </p>
 
-      <div class="grid grid-2">
-        <div>
-          <label>Nuevo límite de toallas</label>
-          <input type="number" id="detailLimit" min="0">
+      <div id="editBlock" class="hidden" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
+        <h3 style="margin: 0 0 8px;">Editar información</h3>
+        <div class="grid grid-2">
+          <div>
+            <label>Nombre del huésped</label>
+            <input type="text" id="editName" maxlength="100">
+          </div>
+          <div>
+            <label>Habitación</label>
+            <input type="text" id="editRoom" maxlength="20">
+          </div>
+          <div>
+            <label>Código de tarjeta (4 a 20 dígitos)</label>
+            <input type="text" id="editBarcode" inputmode="numeric" maxlength="20">
+          </div>
+          <div>
+            <label>Límite de toallas</label>
+            <input type="number" id="detailLimit" min="0">
+          </div>
+        </div>
+
+        <div style="margin-top: 12px;">
+          <label>Comentario</label>
+          <textarea id="detailComment" rows="3"></textarea>
         </div>
       </div>
 
-      <div style="margin-top: 12px;">
-        <label>Comentario</label>
-        <textarea id="detailComment" rows="3"></textarea>
-      </div>
-
       <div style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
-        <button id="saveStayBtn">Guardar cambios</button>
+        <button id="saveStayBtn" class="hidden">Guardar cambios</button>
+        <button id="cancelEditBtn" type="button" class="secondary hidden">Cancelar</button>
         <button id="checkoutBtn" class="danger">Check-out</button>
       </div>
     </div>

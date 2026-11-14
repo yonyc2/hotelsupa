@@ -107,7 +107,8 @@ const Backend = (() => {
   });
 
   const updateStay = (id, body) => Supa.rpc('update_stay', {
-    p_id: id, p_towel_limit: body.towel_limit, p_comment: body.comment, p_guest_name: body.guest_name
+    p_id: id, p_towel_limit: body.towel_limit, p_comment: body.comment, p_guest_name: body.guest_name,
+    p_room_number: body.room_number, p_guest_barcode: body.guest_barcode
   });
 
   const moveTowels = (id, body) => Supa.rpc('move_towels', { p_stay_id: id, p_action: body.action, p_qty: body.qty, p_reason: body.reason });

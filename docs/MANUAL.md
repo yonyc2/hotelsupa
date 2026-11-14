@@ -13,7 +13,7 @@ La sesión se renueva sola mientras uses la aplicación. Los usuarios inactivos 
    - Una habitación o un código solo puede estar activo con un huésped a la vez; tras el check-out se pueden reutilizar.
    - Las toallas iniciales no pueden superar el límite.
 2. **Buscar** por nombre, habitación o código; "Mostrar todos" incluye a quienes ya salieron.
-3. **Detalle**: editar límite (no menor a las toallas que ya tiene) y comentario.
+3. **Detalle**: al elegir un huésped aparece su información y, arriba a la derecha, el botón **Editar**. Permite cambiar nombre, habitación, código de tarjeta, límite de toallas (no menor a las toallas que ya tiene) y comentario; con **Guardar cambios** se aplican y con **Cancelar** se descartan. La habitación y el código no pueden repetirse con otro huésped activo.
 4. **Check-out**: solo cuando el huésped tiene 0 toallas.
 
 ## Toallero

@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('searchInput').addEventListener('input', debounce(loadStays, 300));
   document.getElementById('showAll').addEventListener('change', loadStays);
   document.getElementById('saveStayBtn').addEventListener('click', saveCurrentStay);
+  document.getElementById('editStayBtn').addEventListener('click', startEditStay);
+  document.getElementById('cancelEditBtn').addEventListener('click', cancelEditStay);
   document.getElementById('checkoutBtn').addEventListener('click', checkoutCurrentStay);
 });
 
@@ -103,14 +105,26 @@ async function createStay(e) {
   }
 }
 
+let editingStayId = null;   // id del huésped que se está editando (null = modo lectura)
+
 async function selectStay(id) {
   try {
     const stay = await api(`/api/stays/${id}`);
+    // Si se elige a otro huésped mientras se edita, se cancela la edición
+    if (editingStayId !== null && editingStayId !== stay.id) editingStayId = null;
     currentStay = stay;
     renderDetail();
   } catch (err) {
     showMessage('recepcionMsg', err.message, 'error');
   }
+}
+
+function fillEditInputs() {
+  document.getElementById('editName').value = currentStay.guest_name;
+  document.getElementById('editRoom').value = currentStay.room_number;
+  document.getElementById('editBarcode').value = currentStay.guest_barcode;
+  document.getElementById('detailLimit').value = currentStay.towel_limit;
+  document.getElementById('detailComment').value = currentStay.comment || '';
 }
 
 function renderDetail() {
@@ -124,27 +138,45 @@ function renderDetail() {
   document.getElementById('detailEntry').textContent = currentStay.entry_date_cdmx;
   document.getElementById('detailExit').textContent = currentStay.exit_date_cdmx || 'Pendiente';
   document.getElementById('detailStatus').textContent = currentStay.status;
+  document.getElementById('detailLimitText').textContent = currentStay.towel_limit;
+  document.getElementById('detailCommentText').textContent = currentStay.comment || '—';
   setTextAnimated('detailCurrent', currentStay.current_towels);
   setTextAnimated('detailRemaining', currentStay.towel_limit - currentStay.current_towels);
 
-  document.getElementById('detailLimit').value = currentStay.towel_limit;
-  document.getElementById('detailComment').value = currentStay.comment || '';
+  // Mientras se edita no se pisan los datos que la persona está escribiendo
+  const editing = editingStayId === currentStay.id;
+  if (!editing) fillEditInputs();
+
+  document.getElementById('editBlock').classList.toggle('hidden', !editing);
+  document.getElementById('saveStayBtn').classList.toggle('hidden', !editing);
+  document.getElementById('cancelEditBtn').classList.toggle('hidden', !editing);
+  document.getElementById('editStayBtn').disabled = editing;
 
   const checkoutBtn = document.getElementById('checkoutBtn');
+  checkoutBtn.classList.toggle('hidden', editing);
+  checkoutBtn.disabled = currentStay.status !== 'activo' || currentStay.current_towels !== 0;
+}
 
-  if (currentStay.status !== 'activo') {
-    checkoutBtn.disabled = true;
-  } else if (currentStay.current_towels !== 0) {
-    checkoutBtn.disabled = true;
-  } else {
-    checkoutBtn.disabled = false;
-  }
+function startEditStay() {
+  if (!currentStay) return;
+  editingStayId = currentStay.id;
+  fillEditInputs();
+  renderDetail();
+  document.getElementById('editName').focus();
+}
+
+function cancelEditStay() {
+  editingStayId = null;
+  renderDetail();
 }
 
 async function saveCurrentStay() {
   if (!currentStay) return;
 
   const payload = {
+    guest_name: document.getElementById('editName').value,
+    room_number: document.getElementById('editRoom').value,
+    guest_barcode: document.getElementById('editBarcode').value,
     towel_limit: Number(document.getElementById('detailLimit').value),
     comment: document.getElementById('detailComment').value
   };
@@ -155,11 +187,12 @@ async function saveCurrentStay() {
       body: payload
     });
 
+    editingStayId = null;
     showMessage('recepcionMsg', 'Datos actualizados correctamente', 'success');
     await selectStay(currentStay.id);
     await loadStays();
   } catch (err) {
-    showMessage('recepcionMsg', err.message, 'error');
+    showMessage('recepcionMsg', err.message, 'error');   // se queda en modo edición para corregir
   }
 }
 
