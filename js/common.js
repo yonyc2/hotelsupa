@@ -86,17 +86,22 @@ const actions = { logout };
 
 guardPage();
 
-// El administrador tiene todos los privilegios: ve un menú para pasar entre las tres pantallas
+// Menú para pasar entre pantallas: el administrador ve las tres; la recepcionista ve Recepción y Toallero
+const NAV_PAGES = {
+  admin: [['admin.html', 'Administración'], ['recepcion.html', 'Recepción'], ['toallero.html', 'Toallero']],
+  recepcion: [['recepcion.html', 'Recepción'], ['toallero.html', 'Toallero']]
+};
+
 function buildAdminNav() {
   const session = Store.getSession();
   const bar = document.querySelector('.topbar');
-  if (!session || session.role !== 'admin' || !bar || bar.querySelector('[data-nav]')) return;
+  if (!session || !NAV_PAGES[session.role] || !bar || bar.querySelector('[data-nav]')) return;
 
   const current = window.location.pathname.split('/').pop() || 'index.html';
   const nav = document.createElement('div');
   nav.style.cssText = 'display: flex; gap: 8px; flex-wrap: wrap; flex: 1; margin-left: 16px;';
 
-  [['admin.html', 'Administración'], ['recepcion.html', 'Recepción'], ['toallero.html', 'Toallero']].forEach(([page, label]) => {
+  NAV_PAGES[session.role].forEach(([page, label]) => {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.textContent = label;
