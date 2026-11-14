@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('showAll').addEventListener('change', loadStays);
   document.getElementById('saveStayBtn').addEventListener('click', saveCurrentStay);
   document.getElementById('editStayBtn').addEventListener('click', startEditStay);
+  document.getElementById('giveTowelsBtn').addEventListener('click', () => moveTowels('entrega'));
+  document.getElementById('receiveTowelsBtn').addEventListener('click', () => moveTowels('devolucion'));
   document.getElementById('cancelEditBtn').addEventListener('click', cancelEditStay);
   document.getElementById('checkoutBtn').addEventListener('click', checkoutCurrentStay);
 });
@@ -152,9 +154,60 @@ function renderDetail() {
   document.getElementById('cancelEditBtn').classList.toggle('hidden', !editing);
   document.getElementById('editStayBtn').disabled = editing;
 
+  // Dar y recibir toallas (solo en modo lectura y con el huésped activo)
+  document.getElementById('towelBlock').classList.toggle('hidden', editing);
+  const canMove = currentStay.status === 'activo';
+  document.getElementById('giveTowelsBtn').disabled = !canMove;
+  document.getElementById('receiveTowelsBtn').disabled = !canMove;
+  renderDetailMovements();
+
   const checkoutBtn = document.getElementById('checkoutBtn');
   checkoutBtn.classList.toggle('hidden', editing);
   checkoutBtn.disabled = currentStay.status !== 'activo' || currentStay.current_towels !== 0;
+}
+
+function renderDetailMovements() {
+  const tbody = document.getElementById('detailMovs');
+  const movs = (currentStay.movements || []).slice(0, 10);
+
+  if (!movs.length) {
+    tbody.innerHTML = '<tr><td colspan="5">Sin movimientos</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = movs.map(m => `
+    <tr>
+      <td>${escapeHtml(m.created_at_cdmx)}</td>
+      <td>${escapeHtml(m.username || '')}</td>
+      <td>${escapeHtml(m.movement_type)}</td>
+      <td>${m.quantity > 0 ? '+' : ''}${escapeHtml(m.quantity)}</td>
+      <td>${escapeHtml(m.balance_after)}</td>
+    </tr>
+  `).join('');
+}
+
+async function moveTowels(action) {
+  if (!currentStay) return;
+
+  const qty = Number(document.getElementById('towelQty').value);
+  if (!Number.isInteger(qty) || qty <= 0) {
+    showMessage('recepcionMsg', 'Cantidad inválida', 'error');
+    return;
+  }
+
+  try {
+    await api(`/api/stays/${currentStay.id}/towels`, {
+      method: 'POST',
+      body: { action, qty }
+    });
+
+    document.getElementById('towelQty').value = 1;
+    showMessage('recepcionMsg', 'Movimiento registrado correctamente', 'success');
+    await selectStay(currentStay.id);
+    await loadStays();
+  } catch (err) {
+    showMessage('recepcionMsg', err.message, 'error');
+  }
 }
 
 function startEditStay() {

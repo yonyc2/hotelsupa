@@ -105,6 +105,31 @@
         <strong>Comentario:</strong> <span id="detailCommentText"></span>
       </p>
 
+      <div id="towelBlock" style="border-top: 1px solid #e5e7eb; padding-top: 12px; margin-bottom: 12px;">
+        <h3 style="margin: 0 0 8px;">Dar y recibir toallas</h3>
+        <div class="toolbar" style="margin-bottom: 8px;">
+          <input type="number" id="towelQty" min="1" value="1" style="width: 110px; min-width: 0;">
+          <button id="giveTowelsBtn" type="button">Entregar toallas</button>
+          <button id="receiveTowelsBtn" type="button" class="secondary">Recibir toallas</button>
+        </div>
+
+        <h3 style="margin: 12px 0 8px;">Últimos movimientos</h3>
+        <div class="table-wrap" style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha CDMX</th>
+                <th>Usuario</th>
+                <th>Tipo</th>
+                <th>Cantidad</th>
+                <th>Saldo</th>
+              </tr>
+            </thead>
+            <tbody id="detailMovs"></tbody>
+          </table>
+        </div>
+      </div>
+
       <div id="editBlock" class="hidden" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
         <h3 style="margin: 0 0 8px;">Editar información</h3>
         <div class="grid grid-2">

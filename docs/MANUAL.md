@@ -14,7 +14,8 @@ La sesión se renueva sola mientras uses la aplicación. Los usuarios inactivos 
    - Las toallas iniciales no pueden superar el límite.
 2. **Buscar** por nombre, habitación o código; "Mostrar todos" incluye a quienes ya salieron.
 3. **Detalle**: al elegir un huésped aparece su información y, arriba a la derecha, el botón **Editar**. Permite cambiar nombre, habitación, código de tarjeta, límite de toallas (no menor a las toallas que ya tiene) y comentario; con **Guardar cambios** se aplican y con **Cancelar** se descartan. La habitación y el código no pueden repetirse con otro huésped activo.
-4. **Check-out**: solo cuando el huésped tiene 0 toallas.
+4. **Dar y recibir toallas**: en el detalle del huésped hay una cantidad y los botones **Entregar toallas** y **Recibir toallas** (mismas reglas que en Toallero: no superar el límite ni dejar la cuenta en negativo), con la lista de los últimos movimientos.
+5. **Check-out**: solo cuando el huésped tiene 0 toallas.
 
 ## Toallero
 Escanea el código de la tarjeta (o escríbelo y presiona Enter). Se muestran los datos del huésped y los últimos movimientos.
