@@ -86,10 +86,9 @@ const actions = { logout };
 
 guardPage();
 
-// Menú para pasar entre pantallas: el administrador ve las tres; la recepcionista ve Recepción y Toallero
+// Menú para pasar entre pantallas: solo el administrador (tiene acceso a las tres)
 const NAV_PAGES = {
-  admin: [['admin.html', 'Administración'], ['recepcion.html', 'Recepción'], ['toallero.html', 'Toallero']],
-  recepcion: [['recepcion.html', 'Recepción'], ['toallero.html', 'Toallero']]
+  admin: [['admin.html', 'Administración'], ['recepcion.html', 'Recepción'], ['toallero.html', 'Toallero']]
 };
 
 function buildAdminNav() {

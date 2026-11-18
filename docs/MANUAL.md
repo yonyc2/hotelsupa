@@ -2,7 +2,7 @@
 
 ## Roles
 - **Administrador**: tiene todos los privilegios. Además de la administración (usuarios, historial, exportar, respaldos), puede usar las pantallas de Recepción y de Toallero; un menú en la barra superior permite pasar de una a otra.
-- **Recepción**: registrar y editar huéspedes, check-out, y también puede usar la pantalla de Toallero (escanear, dar y recibir toallas); un menú en la barra superior permite pasar de una a otra.
+- **Recepción**: registrar y editar huéspedes, check-out, y dar y recibir toallas desde el detalle del huésped. No tiene acceso a la pantalla de Toallero.
 - **Toallero**: escanear tarjeta, entregar y devolver toallas.
 
 Después de 5 intentos fallidos con un usuario (o 30 en el navegador) el acceso se bloquea 15 minutos.
