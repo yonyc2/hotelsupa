@@ -16,7 +16,7 @@ index.html        entrada: manda a cada rol a su pantalla
 login.html        inicio de sesión
 recepcion.html    altas, búsqueda, edición y check-out de huéspedes
 toallero.html     escaneo de tarjeta y entrega/devolución de toallas
-admin.html        usuarios, historial, exportar a Excel, respaldos
+admin.html        usuarios, historial, exportar a Excel, eliminar datos antiguos
 css/app.css       estilos y animaciones
 js/config.js      URL y clave pública de Supabase
 js/supabase.js    cliente mínimo de Supabase (Auth, REST, RPC) sin librerías
@@ -24,7 +24,6 @@ js/backend.js     traduce las rutas /api/... a llamadas a Supabase
 js/storage.js     sesión del navegador y bloqueo por intentos fallidos
 js/xlsx.js        generador de Excel (.xlsx) sin librerías
 js/reporte.js     reporte de toallas por día (Recepción, Toallero y Administración)
-js/backup.js      respaldos (carpeta automática diaria y manual)
 js/common.js      utilidades, protección de páginas y actualización entre dispositivos
 js/login.js, recepcion.js, toallero.js, admin.js   lógica de cada pantalla
 supabase/schema.sql                      tablas, reglas de negocio y seguridad (RLS)

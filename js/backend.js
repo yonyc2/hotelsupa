@@ -168,21 +168,6 @@ const Backend = (() => {
     return { profiles, stays, movements, history };
   }
 
-  async function snapshot() {
-    const s = await readAll();
-    // Las vistas traen columnas de más (nombres, fechas CDMX): el respaldo guarda las tablas base
-    const strip = (rows, extra) => rows.map(r => { const o = { ...r }; extra.forEach(k => delete o[k]); return o; });
-    return {
-      app: 'hotel-toallas', version: 3, exported_at: new Date().toISOString(),
-      data: {
-        profiles: s.profiles,
-        stays: strip(s.stays, ['entry_date_cdmx', 'exit_date_cdmx']),
-        movements: strip(s.movements, ['created_at_cdmx', 'username', 'guest_name', 'room_number']),
-        history: strip(s.history, ['created_at_cdmx', 'username', 'full_name', 'guest_name', 'room_number'])
-      }
-    };
-  }
-
   async function exportDatabase() {
     const { profiles, stays, movements, history } = await readAll();
     const un = id => (profiles.find(u => u.id === id) || {}).username || '';
@@ -249,5 +234,5 @@ const Backend = (() => {
     throw new ApiError(404, 'Ruta no encontrada');
   }
 
-  return { handle, snapshot, ApiError };
+  return { handle, ApiError };
 })();

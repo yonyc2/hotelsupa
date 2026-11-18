@@ -1,7 +1,7 @@
 # Manual de uso
 
 ## Roles
-- **Administrador**: tiene todos los privilegios. Además de la administración (usuarios, historial, exportar, respaldos), puede usar las pantallas de Recepción y de Toallero; un menú en la barra superior permite pasar de una a otra.
+- **Administrador**: tiene todos los privilegios. Además de la administración (usuarios, historial, exportar, eliminar datos antiguos), puede usar las pantallas de Recepción y de Toallero; un menú en la barra superior permite pasar de una a otra.
 - **Recepción**: registrar y editar huéspedes, check-out, y dar y recibir toallas desde el detalle del huésped. No tiene acceso a la pantalla de Toallero.
 - **Toallero**: escanear tarjeta, entregar y devolver toallas.
 
@@ -47,10 +47,7 @@ Al final de cada pantalla hay un reporte por día:
 - Se actualiza solo cuando otro dispositivo registra movimientos.
 - Si usas "Eliminar datos antiguos", los movimientos de los huéspedes borrados dejan de contar en días anteriores.
 
-## Respaldos
-Los datos están en Supabase, no en el navegador. Aun así conviene tener copias propias:
-- **Elegir carpeta de respaldos automáticos** (Chrome/Edge): al abrir la administración se guarda un `.json` por día con todas las tablas y se conservan los últimos 14. El navegador puede pedir permiso otra vez en cada sesión; "Respaldar ahora" lo reactiva.
-- **Respaldar ahora**: guarda un `.json` en la carpeta elegida o lo descarga.
-- **Exportar base de datos**: el Excel también sirve como copia de consulta.
+## Copias de seguridad
+Los datos están en Supabase, no en el navegador. La aplicación ya no incluye respaldos propios:
+- **Exportar base de datos** descarga un Excel con toda la información, útil como copia de consulta (no se puede restaurar desde la app).
 - Revisa en Supabase las opciones de respaldo de tu plan (Database > Backups).
-- Restaurar un `.json` no se hace desde la app (las tablas están protegidas); si lo necesitas, se hace desde el SQL Editor de Supabase.

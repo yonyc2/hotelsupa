@@ -9,12 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('historySearch').addEventListener('input', debounce(renderHistory, 150));
   document.getElementById('exportDbBtn').addEventListener('click', exportDatabase);
 
-  document.getElementById('backupFolderBtn').addEventListener('click', chooseBackupFolder);
-  document.getElementById('backupNowBtn').addEventListener('click', backupNow);
   document.getElementById('purgeBtn').addEventListener('click', purgeOldData);
 
   checkDefaultPasswords();
-  Backup.auto().catch(() => {}).finally(refreshBackupStatus);
 
   // Actualización si otro dispositivo cambia los datos
   startSocket(() => { loadUsers(); loadHistory(); });
@@ -32,21 +29,6 @@ async function checkDefaultPasswords() {
   } catch (err) {
     // ignore
   }
-}
-
-async function refreshBackupStatus() {
-  document.getElementById('backupStatus').textContent = await Backup.statusText();
-}
-
-async function chooseBackupFolder() {
-  try {
-    await Backup.chooseFolder();
-    await Backup.auto();
-    showMessage('adminMsg', 'Carpeta elegida. Se hará un respaldo automático diario (se conservan los últimos 14).', 'success');
-  } catch (err) {
-    if (err && err.name !== 'AbortError') showMessage('adminMsg', err.message, 'error');
-  }
-  refreshBackupStatus();
 }
 
 async function purgeOldData() {
@@ -94,14 +76,16 @@ async function purgeOldData() {
   }
 }
 
-async function backupNow() {
-  try {
-    const where = await Backup.save('manual');
-    showMessage('adminMsg', where === 'carpeta' ? 'Respaldo guardado en la carpeta elegida' : 'Respaldo descargado', 'success');
-  } catch (err) {
-    showMessage('adminMsg', err.message, 'error');
-  }
-  refreshBackupStatus();
+// Descarga un archivo generado en el navegador
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
 }
 
 async function loadUsers() {
@@ -310,7 +294,7 @@ async function exportDatabase() {
   try {
     // Genera el Excel (con todo el historial) y después limpia el historial en la base
     const { blob, filename } = await api('/api/export-db', { method: 'POST' });
-    Backup.download(blob, filename);
+    downloadBlob(blob, filename);
 
     showMessage('adminMsg', 'Excel descargado. Se limpió el historial; usuarios y huéspedes se conservan.', 'success');
     loadHistory();
